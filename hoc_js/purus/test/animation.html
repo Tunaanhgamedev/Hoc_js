@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>animation</title>
+</head>
+
+<body>
+    <canvas id="canvas"> </canvas>
+</body>
+<script>
+    "use strict";
+
+    let canvas;
+    let context;
+    let window_height;
+    let window_width;
+
+    window.onload = init;
+
+    function init() {
+        canvas = document.getElementById('canvas');
+        context = canvas.getContext('2d');
+
+        window_height = window.innerHeight;
+        window_width = window.innerWidth;
+
+        canvas.width = window_width;
+        canvas.height = window_height;
+
+        canvas.style.background = 'lightgrey';
+
+        window.requestAnimationFrame(gameLoop);
+    }
+
+    function gameLoop(timeStamp) {
+        secondsPassed = (timeStamp - oldTimeStamp) / 1000;
+        oldTimeStamp = timeStamp;
+
+        update(secondsPassed);
+        draw();
+        window.requestAnimationFrame(gameLoop);
+    }
+
+    function draw() {
+        context.clearRect(0, 0, window_width, window_height);
+
+        context.fillStyle = 'blue';
+        context.strokeStyle = 'red';
+        context.beginPath();
+        context.arc(rectX, rectY, 50, 0, 2 * Math.PI);
+        context.fill();
+        context.stroke();
+    }
+
+    let rectX;
+    let rectY;
+    let secondsPassed = 0;
+    let oldTimeStamp = 0;
+    let movingSpeed = 50;
+
+    secondsPassed = Math.min(secondsPassed, 0.1);
+    let timePassed = 0;
+    function update(secondsPassed) {
+        timePassed += secondsPassed;
+
+        rectX = easeOutBounce(timePassed, 100, 100, 2);
+        rectY = easeOutBounce(timePassed, 100, 500, 2);
+    }
+
+    function easeOutBounce(t, b, c, d) {
+        t /= d;
+
+        if (t < (1 / 2.75)) {
+            return c * (7.5625 * t * t) + b;
+        } else if (t < (2 / 2.75)) {
+            t -= (1.5 / 2.75);
+            return c * (7.5625 * t * t + 0.75) + b;
+        } else if (t < (2.5 / 2.75)) {
+            t -= (2.25 / 2.75);
+            return c * (7.5625 * t * t + 0.9375) + b;
+        } else {
+            t -= (2.625 / 2.75);
+            return c * (7.5625 * t * t + 0.984375) + b;
+        }
+    }
+
+</script>
+
+</html>
