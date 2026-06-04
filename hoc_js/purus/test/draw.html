@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draw</title>
+</head>
+
+<body>
+    <canvas id="canvas" width="1500" height="700" style="border:1px solid lightgrey;"> </canvas>
+</body>
+<script>
+    "use strict";
+    let canvas;
+    let context;
+
+    window.onload = init;
+
+    function init() {
+        // Get a reference to the canvas
+        canvas = document.getElementById('canvas');
+        context = canvas.getContext('2d');
+
+        draw();
+    }
+
+    function draw() {
+        // triangle stroke
+        context.strokeStyle = 'red';
+        context.beginPath();
+        context.moveTo(400, 200);
+        context.lineTo(500, 100);
+        context.lineTo(600, 200);
+        context.closePath(); // đóng đường, tự nối lại
+        context.stroke();
+
+        // triangle fill
+        context.fillStyle = 'blue';
+        context.beginPath();
+        context.moveTo(800, 300);
+        context.lineTo(900, 200);
+        context.lineTo(1000, 300); // chỉ cần 2 đường là tự nối lại
+        context.fill();
+    }
+</script>
+
+</html>

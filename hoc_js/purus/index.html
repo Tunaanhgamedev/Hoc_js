@@ -8,30 +8,18 @@
 </head>
 
 <body>
-    <canvas id="canvas" width="750" height="400" style="border:1px solid lightgrey;"> </canvas>
+    <canvas id="canvas" width="1500" height="700" style="border:1px solid lightgrey;"> </canvas>
+
+    <!-- <svg width="210mm" height="297mm" viewBox="0 0 210 297" version="1.1" id="svg1"
+        inkscape:version="1.3.2 (091e20e, 2023-11-25)" sodipodi:docname="drawing.svg"
+        xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+        xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns="http://www.w3.org/2000/svg"
+        xmlns:svg="http://www.w3.org/2000/svg">
+        <path style="fill:#ef5e5e;stroke-width:0.264583"
+            d="M 104.22331,133.37668 C -1.5072094,-35.219492 103.13006,33.890796 103.13006,33.890796 c 0,0 101.73939,-69.935966 1.09325,99.485884 z"
+            id="path1" />
+    </svg> -->
 </body>
-<script>
-    "use strict";
-    let canvas;
-    let context;
-
-    window.onload = init;
-    function init() {
-        // Get a reference to the canvas
-        canvas = document.getElementById('canvas');
-        context = canvas.getContext('2d');
-
-        draw();
-    }
-
-    function draw() {
-        // Get a random color, red or blue
-        let randomColor = Math.random() > 0.5 ? '#ff8080' : '#0099b0';
-
-        // Draw a rectangle
-        context.fillStyle = randomColor;
-        context.fillRect(100, 50, 200, 175);
-    }
-</script>
+<script src="animation.js"></script>
 
 </html>

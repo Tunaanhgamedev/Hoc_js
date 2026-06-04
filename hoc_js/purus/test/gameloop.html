@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>gameloop</title>
+</head>
+
+<body>
+    <canvas id="canvas" width="1500" height="700" style="border:1px solid lightgrey;"> </canvas>
+</body>
+<script>
+    let lastTime = 0;
+
+    // 1. Hàm tính toán logic
+    function update(deltaTime) {
+        // Ví dụ: Di chuyển nhân vật 50 pixel mỗi giây
+        // player.x += 50 * (deltaTime / 1000); 
+    }
+
+    // 2. Hàm vẽ đồ họa
+    function draw() {
+        // Xóa canvas cũ
+        // ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Vẽ nhân vật ở vị trí mới
+        // ctx.fillRect(player.x, player.y, 32, 32); 
+    }
+
+    // 3. Trái tim của game (Vòng lặp)
+    function gameLoop(timestamp) {
+        // timestamp được requestAnimationFrame tự động truyền vào
+        // Tính toán deltaTime (thời gian giữa frame hiện tại và frame trước)
+        let deltaTime = timestamp - lastTime;
+        lastTime = timestamp;
+
+        // Chạy logic và vẽ
+        update(deltaTime);
+        draw();
+
+        // Gọi lại vòng lặp cho khung hình tiếp theo
+        requestAnimationFrame(gameLoop);
+    }
+
+    // Bắt đầu vòng lặp lần đầu tiên
+    requestAnimationFrame(gameLoop);
+</script>
+
+</html>
