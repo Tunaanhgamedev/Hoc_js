@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collision Physics</title>
+</head>
+
+<body>
+    <canvas id="canvas" width="800" height="600" style="border:1px solid lightgrey;"></canvas>
+</body>
+<script>
+    let canvas;
+    let context;
+
+    window.onload = init;
+    function init() {
+        canvas = document.getElementById('canvas');
+        context = canvas.getContext('2d');
+
+        Circles();
+        Squares();
+        window.requestAnimationFrame(gameLoop);
+    }
+
+    let timeStamp = 0;
+    let oldTimeStamp = 0;
+    let secondsPassed = 0;
+
+    function clearCanvas() {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function gameLoop(timeStamp) {
+        secondsPassed = (timeStamp - oldTimeStamp) / 1000;
+        oldTimeStamp = timeStamp;
+
+        for (let i = 0; i < gameObjects.length; i++) {
+            gameObjects[i].update(secondsPassed);
+        }
+
+        clearCanvas();
+        detectCollisions();
+
+        for (let i = 0; i < gameObjects.length; i++) {
+            gameObjects[i].draw();
+        }
+        window.requestAnimationFrame(gameLoop);
+    }
+
+    class GameObject {
+        constructor(context, x, y, vx, vy) {
+            this.context = context;
+            this.x = x;
+            this.y = y;
+            this.vx = vx;
+            this.vy = vy;
+
+            this.isColliding = false;
+        }
+    }
+
+    class Circle extends GameObject {
+        constructor(context, x, y, vx, vy) {
+            super(context, x, y, vx, vy);
+            this.radius = 25;
+        }
+
+        draw() {
+            context.beginPath();
+            context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+            context.fillStyle = 'blue';
+            context.fill();
+            context.strokeStyle = 'red';
+            context.stroke();
+        }
+
+        update(secondsPassed) {
+            this.x += this.vx * secondsPassed;
+            this.y += this.vy * secondsPassed;
+
+            // Tường trái
+            if (this.x - this.radius < 0) {
+                this.x = this.radius;
+                this.vx *= -1;
+            }
+
+            // Tường phải
+            if (this.x + this.radius > canvas.width) {
+                this.x = canvas.width - this.radius;
+                this.vx *= -1;
+            }
+
+            // Trần
+            if (this.y - this.radius < 0) {
+                this.y = this.radius;
+                this.vy *= -1;
+            }
+
+            // Sàn
+            if (this.y + this.radius > canvas.height) {
+                this.y = canvas.height - this.radius;
+                this.vy *= -1;
+            }
+        }
+    }
+
+    class Square extends GameObject {
+        constructor(context, x, y, vx, vy) {
+            super(context, x, y, vx, vy);
+            this.width = 50;
+            this.height = 50;
+        }
+
+        draw() {
+            this.context.fillStyle = this.isColliding ? 'red' : 'blue';
+            this.context.fillRect(this.x, this.y, this.width, this.height);
+        }
+
+        update(secondsPassed) {
+            this.x += this.vx * secondsPassed;
+            this.y += this.vy * secondsPassed;
+
+            // Tường trái
+            if (this.x < 0) {
+                this.x = 0;
+                this.vx *= -1;
+            }
+
+            // Tường phải
+            if (this.x + this.width > canvas.width) {
+                this.x = canvas.width - this.width;
+                this.vx *= -1;
+            }
+
+            // Trần
+            if (this.y < 0) {
+                this.y = 0;
+                this.vy *= -1;
+            }
+
+            // Sàn
+            if (this.y + this.height > canvas.height) {
+                this.y = canvas.height - this.height;
+                this.vy *= -1;
+            }
+        }
+    }
+
+    let gameObjects;
+
+    function Circles() {
+        gameObjects = [
+            new Circle(context, 100, 100, 50, 50),
+            new Circle(context, 300, 100, -50, 50)
+        ];
+    }
+
+    function Squares() {
+        gameObjects.push(
+            new Square(context, 200, 100, 50, 50),
+            new Square(context, 400, 100, -50, 50)
+        );
+    }
+
+    function circleIntersect(circle1, circle2) {
+        let dx = circle1.x - circle2.x;
+        let dy = circle1.y - circle2.y;
+        let distance = Math.sqrt(dx * dx + dy * dy);
+        return distance < circle1.radius + circle2.radius;
+    }
+
+    function rectIntersect(rect1, rect2) {
+        return !(
+            rect1.x + rect1.width < rect2.x ||
+            rect1.x > rect2.x + rect2.width ||
+            rect1.y + rect1.height < rect2.y ||
+            rect1.y > rect2.y + rect2.height
+        );
+    }
+
+    function detectCollisions() {
+        for (let i = 0; i < gameObjects.length; i++) {
+            for (let j = i + 1; j < gameObjects.length; j++) {
+                let obj1 = gameObjects[i];
+                let obj2 = gameObjects[j];
+
+                let vCollisionNorm = {
+                    x: obj2.x - obj1.x,
+                    y: obj2.y - obj1.y
+                };
+                let distance = Math.sqrt(vCollisionNorm.x * vCollisionNorm.x + vCollisionNorm.y * vCollisionNorm.y);
+                vCollisionNorm.x /= distance;
+                vCollisionNorm.y /= distance;
+                let vRelativeVelocity = {
+                    x: obj1.vx - obj2.vx,
+                    y: obj1.vy - obj2.vy
+                };
+                let speed = vRelativeVelocity.x * vCollisionNorm.x + vRelativeVelocity.y * vCollisionNorm.y;
+                if (obj1 instanceof Circle && obj2 instanceof Circle) {
+                    if (circleIntersect(obj1, obj2)) {
+                        obj1.isColliding = true;
+                        obj2.isColliding = true;
+
+                        obj1.vx -= speed * vCollisionNorm.x;
+                        obj1.vy -= speed * vCollisionNorm.y;
+                        obj2.vx += speed * vCollisionNorm.x;
+                        obj2.vy += speed * vCollisionNorm.y;
+                    }
+                }
+
+                if (obj1 instanceof Square && obj2 instanceof Square) {
+                    if (rectIntersect(obj1, obj2)) {
+                        obj1.isColliding = true;
+                        obj2.isColliding = true;
+
+                        obj1.vx -= speed * vCollisionNorm.x;
+                        obj1.vy -= speed * vCollisionNorm.y;
+                        obj2.vx += speed * vCollisionNorm.x;
+                        obj2.vy += speed * vCollisionNorm.y;
+                    }
+                }
+            }
+        }
+    }
+</script>
+
+</html>

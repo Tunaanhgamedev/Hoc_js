@@ -48,7 +48,7 @@ let timePassed = 0; // tổng thời gian đã trôi qua kể từ khi bắt đ�
 
 function update(secondsPassed) {
 
-    timePassed += secondsPassed
+    timePassed += secondsPassed;
 
     // Sử dụng hàm easing để tính toán vị trí mới của hình chữ nhật
     rectX = easeInOutQuint(timePassed, 50, 500, 1.5);
