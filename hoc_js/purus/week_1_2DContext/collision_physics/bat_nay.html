@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COR</title>
+</head>
+
+<body>
+    <canvas id="canvas" width="1500" height="700" style="border:1px solid lightgrey;"> </canvas>
+</body>
+<script>
+    let canvas;
+    let context;
+
+    const g = 9.81;
+
+    window.onload = init;
+
+    function init() {
+        canvas = document.getElementById("canvas");
+        context = canvas.getContext("2d");
+
+        createCircles();
+        // gọi lần đầu
+        window.requestAnimationFrame(gameLoop);
+    }
+
+    let timePassed = 0;
+    let secondsPassed = 0;
+    let oldTimeStamp = 0;
+
+    function clearCanvas() {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function gameLoop(timeStamp) {
+        secondsPassed = (timeStamp - oldTimeStamp) / 1000;
+        oldTimeStamp = timeStamp;
+
+        for (let i = 0; i < gameObjects.length; i++) {
+            gameObjects[i].update(secondsPassed);
+        }
+
+        clearCanvas();
+        detectCollisions();
+        detectEdgeCollisions();
+        for (let i = 0; i < gameObjects.length; i++) {
+            gameObjects[i].draw();
+        }
+
+        window.requestAnimationFrame(gameLoop);
+    }
+
+    class GameObject {
+        constructor(context, x, y, vx, vy) {
+            this.context = context;
+            this.x = x;
+            this.y = y;
+            this.vx = vx;
+            this.vy = vy;
+
+            this.mass = 1;
+            this.isColliding = false;
+        }
+    }
+
+    class Circle extends GameObject {
+        constructor(context, x, y, vx, vy) {
+            super(context, x, y, vx, vy);
+
+            // Đặt bán kính mặc định
+            this.radius = 10;
+
+            this.mass = 0.1;
+        }
+
+        draw() {
+            // vẽ hình tròn
+            this.context.beginPath();
+            this.context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+            this.context.fillStyle = this.isColliding ? "#ff8080" : "#0099b0";
+            this.context.fill();
+        }
+
+        update(secondsPassed) {
+            this.vy += g * 50 * secondsPassed;
+            this.x += this.vx * secondsPassed;
+            this.y += this.vy * secondsPassed;
+        }
+    }
+
+    let gameObjects;
+
+    function createCircles() {
+        gameObjects = [
+            new Circle(context, 200, 200, 20, 50),
+            new Circle(context, 700, 300, 20, -50),
+            new Circle(context, 500, 100, 50, 50),
+            new Circle(context, 600, 150, 50, 50),
+            new Circle(context, 800, 100, -50, 50),
+            new Circle(context, 750, 300, 50, -50),
+            new Circle(context, 750, 200, 50, -50),
+            new Circle(context, 700, 200, 50, -50),
+            new Circle(context, 750, 120, 50, -50),
+            new Circle(context, 600, 300, 50, -50),
+            new Circle(context, 700, 100, 50, -50),
+            new Circle(context, 750, 30, 50, -50),
+            new Circle(context, 750, 300, 50, -50),
+            new Circle(context, 550, 400, 50, -50),
+            new Circle(context, 500, 100, 50, -50),
+            new Circle(context, 601, 600, 50, -50),
+            new Circle(context, 620, 500, 50, -50),
+            new Circle(context, 500, 50, 50, -50),
+            new Circle(context, 250, 100, 50, -50),
+            new Circle(context, 50, 90, 50, -50),
+            new Circle(context, 570, 70, 50, -50),
+            new Circle(context, 650, 100, 50, -50),
+            new Circle(context, 675, 125, 50, -50),
+            new Circle(context, 750, 125, 50, -50),
+            new Circle(context, 775, 50, 50, -50),
+            new Circle(context, 750, 50, 50, -50),
+        ];
+    }
+
+    function detectCollisions() {
+        let obj1;
+        let obj2;
+
+        for (let i = 0; i < gameObjects.length; i++) {
+            gameObjects[i].isColliding = false;
+        }
+        for (let i = 0; i < gameObjects.length; i++) {
+            obj1 = gameObjects[i];
+            for (let j = i + 1; j < gameObjects.length; j++) {
+                obj2 = gameObjects[j];
+                let vCollision = { x: obj2.x - obj1.x, y: obj2.y - obj1.y };
+                let distance = Math.sqrt(
+                    (obj2.x - obj1.x) * (obj2.x - obj1.x) +
+                    (obj2.y - obj1.y) * (obj2.y - obj1.y),
+                );
+                let vCollisionNorm = {
+                    x: vCollision.x / distance,
+                    y: vCollision.y / distance,
+                };
+                let vRelativeVelocity = { x: obj1.vx - obj2.vx, y: obj1.vy - obj2.vy };
+                let speed =
+                    vRelativeVelocity.x * vCollisionNorm.x +
+                    vRelativeVelocity.y * vCollisionNorm.y;
+                let impulse = (2 * speed) / (obj1.mass + obj2.mass);
+                if (obj1 instanceof Circle && obj2 instanceof Circle) {
+                    if (
+                        circleIntersect(
+                            obj1.x,
+                            obj1.y,
+                            obj1.radius,
+                            obj2.x,
+                            obj2.y,
+                            obj2.radius,
+                        )
+                    ) {
+                        if (speed < 0) {
+                            break;
+                        }
+                        obj1.isColliding = true;
+                        obj2.isColliding = true;
+
+                        obj1.vx -= impulse * obj2.mass * vCollisionNorm.x;
+                        obj1.vy -= impulse * obj2.mass * vCollisionNorm.y;
+                        obj2.vx += impulse * obj1.mass * vCollisionNorm.x;
+                        obj2.vy += impulse * obj1.mass * vCollisionNorm.y;
+                    }
+                }
+            }
+        }
+    }
+
+    function circleIntersect(x1, y1, r1, x2, y2, r2) {
+        let squareDistance = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+        return squareDistance <= (r1 + r2) * (r1 + r2);
+    }
+
+    const restitution = 0.9;
+
+    function detectEdgeCollisions() {
+        let obj;
+        for (let i = 0; i < gameObjects.length; i++) {
+            obj = gameObjects[i];
+            if (obj instanceof Circle) {
+                // Kiểm tra trái và phải
+                if (obj.x < obj.radius) {
+                    obj.vx = Math.abs(obj.vx) * restitution;
+                    obj.x = obj.radius;
+                } else if (obj.x > canvas.width - obj.radius) {
+                    obj.vx = -Math.abs(obj.vx) * restitution;
+                    obj.x = canvas.width - obj.radius;
+                }
+
+                // tren va duoi
+                if (obj.y < obj.radius) {
+                    obj.vy = Math.abs(obj.vy) * restitution;
+                    obj.y = obj.radius;
+                } else if (obj.y > canvas.height - obj.radius) {
+                    obj.vy = -Math.abs(obj.vy) * restitution;
+                    obj.y = canvas.height - obj.radius;
+                }
+            }
+        }
+    }
+</script>
+
+</html>

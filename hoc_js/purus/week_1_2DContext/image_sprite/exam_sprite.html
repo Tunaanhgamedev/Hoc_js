@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sprite</title>
+</head>
+
+<body>
+    <canvas id="canvas" width="1500" height="700" style="border:1px solid lightgrey;"> </canvas>
+    <img id="mySprite" src="img/sprite.png" style="display:none;">
+</body>
+<script>
+    "use strict";
+    let canvas;
+    let context;
+    let currentFrame = 0; // khung hình ảnh sprite bắt đầu từ 0
+    let numColumns;
+    let numRows;
+    let frameWidth;
+    let frameHeight;
+    let sprite;
+
+    const g = 9.81;
+
+    window.onload = init;
+
+    function init() {
+        canvas = document.getElementById("canvas");
+        context = canvas.getContext("2d");
+
+        createSprite();
+        createCollisionSprite();
+
+        window.requestAnimationFrame(gameLoop);
+    }
+
+    function clearCanvas() {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    let secondsPassed = 0;
+    let oldTimeStamp = 0;
+
+    function gameLoop(timeStamp) {
+        secondsPassed = (timeStamp - oldTimeStamp) / 1000;
+        oldTimeStamp = timeStamp;
+
+        for (let i = 0; i < gameObjects.length; i++) {
+            gameObjects[i].update(secondsPassed);
+        }
+
+        detectCollisions();
+        clearCanvas();
+        detectEdgeCollisions();
+
+        for (let i = 0; i < gameObjects.length; i++) {
+            gameObjects[i].draw();
+        }
+
+        window.requestAnimationFrame(gameLoop);
+    }
+
+    class GameObject {
+        constructor(context, x, y, vx, vy, mass) {
+            this.context = context;
+            this.x = x;
+            this.y = y;
+            this.vx = vx;
+            this.vy = vy;
+            this.mass = mass;
+            this.isColliding = false;
+        }
+    }
+
+    let gameObjects;
+
+    class Sprite extends GameObject {
+        static numColumns = 5;
+        static numRows = 2;
+        static frameWidth = 0;
+        static frameHeight = 0;
+        static sprite;
+
+        constructor(context, x, y, vx, vy, mass) {
+            super(context, x, y, vx, vy, mass);
+
+            // bán kính hitbox
+            this.radius = 20;
+            this.currentFrame = 0;
+
+            this.loadImage();
+        }
+
+        loadImage() {
+            if (!Sprite.sprite) {
+                Sprite.sprite = new Image();
+
+                Sprite.sprite.onload = () => {
+
+                    Sprite.frameWidth = Sprite.sprite.width / Sprite.numColumns;
+                    Sprite.frameHeight = Sprite.sprite.height / Sprite.numRows;
+                };
+
+                Sprite.sprite.src = "img/sprite.png";
+            }
+        }
+
+        draw() {
+            let column = this.currentFrame % Sprite.numColumns;
+            let row = Math.floor(this.currentFrame / Sprite.numColumns);
+
+            this.context.save();
+            this.context.translate(this.x, this.y);
+            this.context.rotate(Math.PI / 180 * (this.angle + 90));
+            this.context.translate(-this.x, -this.y);
+            this.context.drawImage(Sprite.sprite, column * Sprite.frameWidth, row * Sprite.frameHeight, Sprite.frameWidth, Sprite.frameHeight, (this.x - this.radius), (this.y - this.radius) - this.radius * 0.4, this.radius * 2, this.radius * 2.42);
+            this.context.setTransform(1, 0, 0, 1, 0, 0);
+            this.drawHitbox();
+        }
+
+        handleCollision() {
+            this.currentFrame++;
+            let maxFrame = Sprite.numColumns * Sprite.numRows - 1;
+            if (this.currentFrame >= maxFrame) {
+                this.currentFrame = 0;
+            }
+        }
+
+        update(secondsPassed) {
+            this.x += this.vx * secondsPassed;
+            this.y += this.vy * secondsPassed;
+
+            // Xoay
+            let radians = Math.atan2(this.vy, this.vx);
+            this.angle = 180 * radians / Math.PI;
+        }
+
+        drawHitbox() {
+            this.context.beginPath();
+            this.context.strokeStyle = "red";
+            this.context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            this.context.stroke();
+        }
+    }
+
+    class CollisionSprite extends Sprite {
+        constructor(context, x, y, vx, vy, mass) {
+            super(context, x, y, vx, vy, mass);
+
+            this.radius = 10;
+        }
+
+    }
+
+    function createSprite() {
+        gameObjects = [
+            new Sprite(context, 100, 100, 50, 50, 5),
+            new Sprite(context, 200, 200, -50, -50, 5)
+        ];
+    }
+
+    function createCollisionSprite() {
+        gameObjects.push(
+            new CollisionSprite(context, 50, 10, 50, 50, .5),
+            new CollisionSprite(context, 50, 20, 50, 50, .5),
+            new CollisionSprite(context, 50, 30, 50, 50, .5),
+            new CollisionSprite(context, 70, 40, 50, 50, .5),
+            new CollisionSprite(context, 55, 500, 50, 50, .5),
+            new CollisionSprite(context, 50, 60, 50, 50, .5),
+            new CollisionSprite(context, 50, 50, -50, 50, .5),
+            new CollisionSprite(context, 170, 15, 50, 50, .5),
+            new CollisionSprite(context, 160, 250, 50, 50, .5),
+            new CollisionSprite(context, 150, 30, 50, 50, .5),
+            new CollisionSprite(context, 175, 40, 50, 50, .5),
+            new CollisionSprite(context, 115, 50, 50, 50, .5),
+            new CollisionSprite(context, 125, 60, 50, 50, .5),
+            new CollisionSprite(context, 150, 100, 50, 50, .5),
+            new CollisionSprite(context, 250, 200, 50, 50, .5),
+            new CollisionSprite(context, 130, 250, 50, 50, .5),
+            new CollisionSprite(context, 250, 350, 50, 50, .5),
+            new CollisionSprite(context, 20, 50, 50, 50, .5),
+            new CollisionSprite(context, 250, 100, -50, 50, .5),
+            new CollisionSprite(context, 250, 50, 50, 50, .5),
+            new CollisionSprite(context, 250, 100, -50, -50, .5),
+            new CollisionSprite(context, 350, 150, 50, 50, .5),
+            new CollisionSprite(context, 350, 250, 50, -50, .5),
+            new CollisionSprite(context, 350, 350, 50, 50, .5),
+            new CollisionSprite(context, 350, 40, 50, 50, .5),
+            new CollisionSprite(context, 350, 55, 50, 50, .5),
+            new CollisionSprite(context, 350, 50, 50, -50, .5),
+            new CollisionSprite(context, 50, 50, -50, 50, .5),
+            new CollisionSprite(context, 200, 90, -50, -50, .5),
+            new CollisionSprite(context, 100, 50, 50, 50, .5),
+            new CollisionSprite(context, 30, 50, 50, -50, .5),
+            new CollisionSprite(context, 300, 70, 50, 50, .5),
+            new CollisionSprite(context, 200, 80, 50, 50, .5),
+            new CollisionSprite(context, 40, 50, 50, 50, .5),
+            new CollisionSprite(context, 30, 60, 50, -50, .5),
+            new CollisionSprite(context, 20, 50, -50, 50, .5),
+            new CollisionSprite(context, 50, 50, -50, 50, .5),
+            new CollisionSprite(context, 200, 10, 50, 50, .5),
+            new CollisionSprite(context, 100, 20, 50, 50, .5),
+            new CollisionSprite(context, 30, 30, 50, -50, .5),
+            new CollisionSprite(context, 30, 40, 50, 50, .5),
+            new CollisionSprite(context, 100, 80, 50, 50, .5),
+            new CollisionSprite(context, 40, 100, 50, 50, .5),
+            new CollisionSprite(context, 30, 200, 50, -50, .5),
+            new CollisionSprite(context, 20, 150, -50, 50, .5),
+            new CollisionSprite(context, 150, 150, 50, 50, .5),
+            new CollisionSprite(context, 110, 150, -50, 50, .5),
+            new CollisionSprite(context, 120, 150, 50, -50, .5),
+            new CollisionSprite(context, 130, 150, -50, -50, .5),
+            new CollisionSprite(context, 150, 110, 50, 50, .5),
+            new CollisionSprite(context, 110, 120, -50, 50, .5),
+            new CollisionSprite(context, 120, 130, 50, -50, .5),
+            new CollisionSprite(context, 130, 140, -50, -50, .5),
+            new CollisionSprite(context, 250, 110, 50, 50, .5),
+            new CollisionSprite(context, 210, 120, -50, 50, .5),
+            new CollisionSprite(context, 220, 130, 50, -50, .5),
+            new CollisionSprite(context, 230, 140, -50, -50, .5),
+            new CollisionSprite(context, 150, 210, 50, 50, .5),
+            new CollisionSprite(context, 110, 220, -50, 50, .5),
+            new CollisionSprite(context, 120, 230, 50, -50, .5),
+            new CollisionSprite(context, 130, 240, -50, -50, .5),
+        );
+    }
+
+    function detectCollisions() {
+        let obj1;
+        let obj2;
+
+        for (let i = 0; i < gameObjects.length; i++) {
+            gameObjects[i].isColliding = false;
+        }
+
+        for (let i = 0; i < gameObjects.length; i++) {
+            obj1 = gameObjects[i];
+            for (let j = i + 1; j < gameObjects.length; j++) {
+                obj2 = gameObjects[j];
+
+                // vector va cham
+                let dx = obj2.x - obj1.x;
+                let dy = obj2.y - obj1.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                let vCollision = { x: dx, y: dy };
+                // don vi vector va cham
+                let vCollisionNorm = {
+                    x: vCollision.x / distance,
+                    y: vCollision.y / distance,
+                };
+                // toc do tuong doi sau va cham
+                let vRelativeVelocity = { x: obj1.vx - obj2.vx, y: obj1.vy - obj2.vy };
+                // toc do tuong doi sau va cham tren phuong vector va cham
+                let speed =
+                    vRelativeVelocity.x * vCollisionNorm.x +
+                    vRelativeVelocity.y * vCollisionNorm.y;
+                // xung luc
+                let impulse = (2 * speed) / (obj1.mass + obj2.mass);
+                if (
+                    spriteIntersects(obj1, obj2)
+                ) {
+                    let overlap =
+                        obj1.radius +
+                        obj2.radius -
+                        distance;
+
+                    if (overlap > 0) {
+
+                        obj1.x -= overlap / 2 * vCollisionNorm.x;
+                        obj1.y -= overlap / 2 * vCollisionNorm.y;
+
+                        obj2.x += overlap / 2 * vCollisionNorm.x;
+                        obj2.y += overlap / 2 * vCollisionNorm.y;
+                    }
+                    if (speed < 0) {
+                        continue;
+                    }
+                    if (!obj1.isColliding) {
+                        obj1.handleCollision();
+                    }
+
+                    if (!obj2.isColliding) {
+                        obj2.handleCollision();
+                    }
+
+                    obj1.isColliding = true;
+                    obj2.isColliding = true;
+
+                    obj1.vx -= impulse * obj2.mass * vCollisionNorm.x;
+                    obj1.vy -= impulse * obj2.mass * vCollisionNorm.y;
+                    obj2.vx += impulse * obj1.mass * vCollisionNorm.x;
+                    obj2.vy += impulse * obj1.mass * vCollisionNorm.y;
+                }
+            }
+        }
+    }
+
+    function spriteIntersects(obj1, obj2) {
+
+        let dx = obj1.x - obj2.x;
+        let dy = obj1.y - obj2.y;
+
+        let distance = Math.sqrt(dx * dx + dy * dy);
+
+        return distance < (obj1.radius + obj2.radius);
+    }
+
+    const restitution = 0.9;
+
+    function detectEdgeCollisions() {
+        let obj;
+        for (let i = 0; i < gameObjects.length; i++) {
+            obj = gameObjects[i];
+            if (obj instanceof Sprite) {
+                // Kiểm tra trái và phải
+                if (obj.x < obj.radius) {
+                    obj.vx = Math.abs(obj.vx) * restitution;
+                    obj.x = obj.radius;
+                } else if (obj.x > canvas.width - obj.radius) {
+                    obj.vx = -Math.abs(obj.vx) * restitution;
+                    obj.x = canvas.width - obj.radius;
+                }
+
+                // tren va duoi
+                if (obj.y < obj.radius) {
+                    obj.vy = Math.abs(obj.vy) * restitution;
+                    obj.y = obj.radius;
+                } else if (obj.y > canvas.height - obj.radius) {
+                    obj.vy = -Math.abs(obj.vy) * restitution;
+                    obj.y = canvas.height - obj.radius;
+                }
+            }
+        }
+    }
+</script>
+
+</html>
