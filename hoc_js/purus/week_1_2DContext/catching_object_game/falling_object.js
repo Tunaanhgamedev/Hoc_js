@@ -1,6 +1,5 @@
 const FALLING_OBJECT_COLOR = "#facc15";
 const FALLING_OBJECT_DARK_COLOR = "#ca8a04";
-
 class FallingObject extends GameObject {
   constructor(context, x, y, size, speed) {
     super(context, x, y, size, size, 0, speed);
@@ -8,8 +7,7 @@ class FallingObject extends GameObject {
   }
 
   update(secondsPassed) {
-    // TODO: Move the object downward.
-    // Hint: call super.update(secondsPassed).
+    super.update(secondsPassed);
   }
 
   draw() {
@@ -34,10 +32,39 @@ class FallingObject extends GameObject {
       Math.PI * 2,
     );
     this.context.fill();
+
+    this.context.fillStyle = "blue";
+    this.context.beginPath();
+    this.context.fillRect(this.x, this.y, this.width, this.height);
+    this.context.fill();
   }
 
   isOffScreen(boardHeight) {
     // TODO: Return true when the object is below the canvas.
     return false;
+  }
+}
+
+class Heart extends FallingObject {
+  constructor(context, x, y, image) {
+    super(context, x, y, 32, FALL_SPEED);
+
+    this.image = image;
+  }
+
+  draw() {
+    this.context.drawImage(this.image, this.x, this.y, this.width, this.height);
+  }
+}
+
+class Bomb extends FallingObject {
+  constructor(context, x, y, image) {
+    super(context, x, y, 32, FALL_SPEED);
+
+    this.image = image;
+  }
+
+  draw() {
+    this.context.drawImage(this.image, this.x, this.y, this.width, this.height);
   }
 }

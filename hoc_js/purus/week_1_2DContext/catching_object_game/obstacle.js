@@ -9,6 +9,7 @@ class Obstacle extends GameObject {
   update(secondsPassed) {
     // TODO: Move the obstacle downward.
     // Hint: call super.update(secondsPassed).
+    super.update(secondsPassed);
   }
 
   draw() {
