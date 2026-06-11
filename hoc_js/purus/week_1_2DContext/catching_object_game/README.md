@@ -6,7 +6,7 @@ A simple HTML5 Canvas game where players control a catcher to collect valuable i
 
 👉 **https://tunaanhgamedev.github.io/Hoc_js/hoc_js/purus/week_1_2DContext/catching_object_game/**
 
-![Game Preview](./preview.png)
+![Game Preview](img/image.png)
 
 ## 📖 Description
 
