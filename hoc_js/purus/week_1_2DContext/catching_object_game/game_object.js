@@ -24,7 +24,6 @@ class GameObject {
     bottom() {
         return this.y + this.height;
     }
-
     isTouching(other) {
         return !(
             this.right() < other.x ||

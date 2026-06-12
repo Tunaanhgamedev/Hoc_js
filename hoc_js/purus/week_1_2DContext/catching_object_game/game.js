@@ -41,7 +41,6 @@ class Game {
       heart: new Image(),
       bomb: new Image(),
     };
-
     this.images.heart.src = "img/heart.png";
     this.images.bomb.src = "img/bomb.png";
 

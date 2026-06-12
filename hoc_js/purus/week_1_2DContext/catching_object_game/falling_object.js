@@ -33,10 +33,8 @@ class FallingObject extends GameObject {
     );
     this.context.fill();
 
-    this.context.fillStyle = "blue";
-    this.context.beginPath();
-    this.context.fillRect(this.x, this.y, this.width, this.height);
-    this.context.fill();
+    this.context.strokeStyle = "blue";
+    this.context.strokeRect(this.x, this.y, this.width, this.height);
   }
 
   isOffScreen(boardHeight) {
@@ -62,6 +60,7 @@ class Bomb extends FallingObject {
     super(context, x, y, 32, FALL_SPEED);
 
     this.image = image;
+    this.isBomb = true;
   }
 
   draw() {
