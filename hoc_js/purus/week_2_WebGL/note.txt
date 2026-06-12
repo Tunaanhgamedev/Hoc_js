@@ -1,0 +1,12 @@
+Bất kỳ dữ liệu nào bạn muốn các chức năng đó có quyền truy cập phải được cung cấp cho GPU. Có 4 cách mà shader có thể nhận dữ liệu.
+
+1. Thuộc tính và bộ đệm
+   - Bộ đệm là các mảng dữ liệu nhị phân mà bạn tải lên GPU. Thông thường bộ đệm chứa những thứ như vị trí, pháp tuyến, tọa độ kết cấu, màu đỉnh, v.v. mặc dù bạn có thể tự do đặt bất cứ thứ gì bạn muốn vào chúng.
+   - Các thuộc tính được sử dụng để chỉ định cách lấy dữ liệu ra khỏi bộ đệm của bạn và cung cấp chúng cho trình đổ bóng đỉnh của bạn. Ví dụ: bạn có thể đặt các vị trí trong bộ đệm dưới dạng ba float 32bit cho mỗi vị trí. Bạn sẽ cho một thuộc tính cụ thể biết bộ đệm nào để kéo các vị trí ra, loại dữ liệu nào nó nên lấy ra (số dấu phẩy động 32 bit 3 thành phần), độ lệch nào trong bộ đệm mà các vị trí bắt đầu và bao nhiêu byte để lấy từ vị trí này sang vị trí tiếp theo.
+   - Bộ đệm không phải là truy cập ngẫu nhiên. Thay vào đó, một vertex shader được thực thi một số lần xác định. Mỗi lần nó được thực thi, giá trị tiếp theo từ mỗi bộ đệm được chỉ định sẽ được kéo ra và gán cho một thuộc tính.
+2. Đồng phục
+   Đồng phục là các biến toàn cục hiệu quả mà bạn đặt trước khi thực hiện chương trình đổ bóng của mình.
+3. Kết cấu
+   Kết cấu là mảng dữ liệu mà bạn có thể truy cập ngẫu nhiên trong chương trình đổ bóng của mình. Điều phổ biến nhất để đưa vào kết cấu là dữ liệu hình ảnh nhưng kết cấu chỉ là dữ liệu và có thể dễ dàng chứa thứ gì đó khác ngoài màu sắc.
+4. Thay đổi
+   Các biến thể là một cách để trình đổ bóng đỉnh truyền dữ liệu đến trình đổ bóng mảnh. Tùy thuộc vào những gì đang được hiển thị, điểm, đường thẳng hoặc hình tam giác, các giá trị được đặt trên một thay đổi bởi trình đổ bóng đỉnh sẽ được nội suy trong khi thực thi trình đổ bóng mảnh.

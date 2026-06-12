@@ -33,8 +33,8 @@ class FallingObject extends GameObject {
     );
     this.context.fill();
 
-    this.context.strokeStyle = "blue";
-    this.context.strokeRect(this.x, this.y, this.width, this.height);
+    // this.context.strokeStyle = "blue";
+    // this.context.strokeRect(this.x, this.y, this.width, this.height);
   }
 
   isOffScreen(boardHeight) {

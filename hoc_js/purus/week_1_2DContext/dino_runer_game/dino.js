@@ -51,7 +51,6 @@ class Dino extends GameObject {
         this.context.fillRect(this.x + 12, this.y + 48, 9, 10 + legOffset);
         this.context.fillRect(this.x + 31, this.y + 48, 9, 10 - legOffset);
     }
-
     reset() {
         this.y = this.groundY - this.height;
         this.vy = 0;
