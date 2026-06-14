@@ -101,10 +101,67 @@ function main() {
     offset,
   );
 
-  var primitiveType = gl.TRIANGLES;
-  var offset = 0;
-  var count = 3;
-  gl.drawArrays(primitiveType, offset, count);
+  //   var primitiveType = gl.TRIANGLES;
+  //   var offset = 0;
+  //   var count = 3;
+  //   gl.drawArrays(primitiveType, offset, count);
+
+  var resolutionUniformLocation = gl.getUniformLocation(
+    program,
+    "u_resolution",
+  );
+
+  //   var positions = [10, 20, 80, 20, 10, 30, 10, 30, 80, 20, 80, 30];
+  //   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+    gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
+
+  //   // draw
+  //   var primitiveType = gl.TRIANGLES;
+  //   var offset = 0;
+  //   var count = 6;
+  //   gl.drawArrays(primitiveType, offset, count);
+
+  var colorUniformLocation = gl.getUniformLocation(program, "u_color");
+
+  // draw 50 random rectangles in random colors
+  for (var ii = 0; ii < 50; ++ii) {
+    setRectangle(
+      gl,
+      randomInt(300),
+      randomInt(300),
+      randomInt(300),
+      randomInt(300),
+    );
+
+    // Set a random color.
+    gl.uniform4f(
+      colorUniformLocation,
+      Math.random(),
+      Math.random(),
+      Math.random(),
+      1,
+    );
+
+    // Draw the rectangle.
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+  }
+  function randomInt(range) {
+    return Math.floor(Math.random() * range);
+  }
+
+  function setRectangle(gl, x, y, width, height) {
+    var x1 = x;
+    var x2 = x + width;
+    var y1 = y;
+    var y2 = y + height;
+
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array([x1, y1, x2, y1, x1, y2, x1, y2, x2, y1, x2, y2]),
+      gl.STATIC_DRAW,
+    );
+  }
 }
 
 main();
