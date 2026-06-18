@@ -118,3 +118,34 @@ gl.uniform1i(someSamplerLoc, unit);
 // ==========================================
 // GLSL
 // ==========================================
+
+vec4 a = vec4(1, 2, 3, 4);
+vec4 b = a * 2.0;
+// b là vec4(2, 4, 6, 8)
+
+mat4 a;
+mat4 b;
+mat4 c = a * b;
+ 
+vec4 v;
+vec4 y = c * v;
+
+v.yyyy = vec4(v.y, v.y, v.y, v.y)
+v.bgra = vec4(v.b, v.g, v.r, v.a)
+vec4(v.rgb, 1) = vec4(v.r, v.g, v.b, 1)
+vec4(1) = vec4(1, 1, 1, 1)
+
+float f = 1;  // ERROR 1 is an int. You can't assign an int to a float
+float f = 1.0;      // use float
+float f = float(1)  // Đúc số nguyên thành float
+
+T sin(T angle)
+vec4 s = sin(v); == vec4 s = vec4(sin(v.x), sin(v.y), sin(v.z), sin(v.w));
+
+vec4 m = mix(v1, v2, f); 
+== 
+vec4 m = vec4(
+  mix(v1.x, v2.x, f),
+  mix(v1.y, v2.y, f),
+  mix(v1.z, v2.z, f),
+  mix(v1.w, v2.w, f));
