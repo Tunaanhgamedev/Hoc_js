@@ -53,7 +53,6 @@ function main() {
 
     var program = createProgram(gl, vertexShader, fragmentShader);
     var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
-    var matrixLocation = gl.getUniformLocation(program, "u_matrix");
     var positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
@@ -66,15 +65,14 @@ function main() {
     setRectangle(gl, 0, 0, image.width, image.height);
 
     var texcoordBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-      0.0,  0.0,
-      1.0,  0.0,
-      0.0,  1.0,
-      0.0,  1.0,
-      1.0,  0.0,
-      1.0,  1.0,
-  ]), gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array([
+        0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0,
+      ]),
+      gl.STATIC_DRAW,
+    );
 
     var texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -87,11 +85,13 @@ function main() {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
 
     var resolutionLocation = gl.getUniformLocation(program, "u_resolution");
+    var textureSizeLocation = gl.getUniformLocation(program, "u_textureSize");
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.useProgram(program);
     gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
+    gl.uniform2f(textureSizeLocation, image.width, image.height);
     gl.enableVertexAttribArray(positionAttributeLocation);
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
