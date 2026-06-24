@@ -50,3 +50,20 @@ function scaling(sx, sy) {
 function identity() {
   return [1, 0, 0, 0, 1, 0, 0, 0, 1];
 }
+
+function projection(width, height) {
+  // Note: Ma trận này lật trục Y sao cho 0 ở trên cùng.
+  return [2 / width, 0, 0, 0, -2 / height, 0, -1, 1, 1];
+}
+
+function translate(m, tx, ty) {
+  return m3.multiply(m, translation(tx, ty));
+}
+
+function rotate(m, angleInRadians) {
+  return m3.multiply(m, rotation(angleInRadians));
+}
+
+function scale(m, sx, sy) {
+  return m3.multiply(m, scaling(sx, sy));
+}

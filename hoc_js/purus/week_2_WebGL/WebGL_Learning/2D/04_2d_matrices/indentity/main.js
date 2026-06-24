@@ -18,12 +18,20 @@ const resolutionLocation = gl.getUniformLocation(program, "u_resolution");
 const colorLocation = gl.getUniformLocation(program, "u_color");
 const matrixLocation = gl.getUniformLocation(program, "u_matrix");
 
+// tạo một ma trận sẽ di chuyển điểm gốc của chữ 'F' về trung tâm của nó.
+// pivot point = (50, 75)
+const moveOriginMatrix = translation(-50, -75);
+
 const translationMatrix = translation(50, 100);
-const rotationMatrix = rotation(0);
+const rotationMatrix = rotation(Math.PI * 0);
 const scaleMatrix = scaling(0.5, 0.5);
 
 let matrix = m3.multiply(translationMatrix, rotationMatrix);
 matrix = m3.multiply(matrix, scaleMatrix);
+matrix = m3.multiply(matrix, moveOriginMatrix);
+
+// indentity matrix
+// let matrix = identity();
 
 const positionBuffer = gl.createBuffer();
 
@@ -37,20 +45,26 @@ gl.useProgram(program);
 gl.enableVertexAttribArray(positionLocation);
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-const size = 2; // 2 components per iteration
-const type = gl.FLOAT; // the data is 32bit floats
-const normalize = false; // don't normalize the data
-const stride = 0; // 0 = move forward size * sizeof(type) each iteration to get the next position
-const offset = 0; // start at the beginning of the buffer
-gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset);
+gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
 gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
 gl.uniform4fv(colorLocation, [Math.random(), Math.random(), Math.random(), 1]);
 
 gl.uniformMatrix3fv(matrixLocation, false, matrix);
 
-const primitiveType = gl.TRIANGLES;
-gl.drawArrays(primitiveType, 0, 18);
+gl.drawArrays(gl.TRIANGLES, 0, 18);
+
+// for (let i = 0; i < 5; ++i) {
+//   // Multiply the matrices.
+//   matrix = m3.multiply(matrix, translationMatrix);
+//   matrix = m3.multiply(matrix, rotationMatrix);
+//   matrix = m3.multiply(matrix, scaleMatrix);
+//   // Set the matrix.
+//   gl.uniformMatrix3fv(matrixLocation, false, matrix);
+
+//   // Draw the geometry.
+//   gl.drawArrays(gl.TRIANGLES, 0, 18);
+// }
 
 function setGeometry(gl) {
   gl.bufferData(
