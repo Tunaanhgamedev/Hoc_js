@@ -76,8 +76,6 @@ function main() {
   var positions = [0, 0, 0, 0.5, 0.7, 0];
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
-  //webglUtils.resizeCanvasToDisplaySize(gl.canvas);
-
   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
   gl.clearColor(0, 0, 0, 0);
@@ -86,82 +84,72 @@ function main() {
   gl.useProgram(program);
   gl.enableVertexAttribArray(positionAttributeLocation);
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-
-  var size = 2; // 2 components per iteration
-  var type = gl.FLOAT; // the data is 32bit floats
-  var normalize = false; // don't normalize the data
-  var stride = 0; // 0 = move forward size * sizeof(type) each iteration to get the next position
-  var offset = 0; // start at the beginning of the buffer
-  gl.vertexAttribPointer(
-    positionAttributeLocation,
-    size,
-    type,
-    normalize,
-    stride,
-    offset,
-  );
-
-  //   var primitiveType = gl.TRIANGLES;
-  //   var offset = 0;
-  //   var count = 3;
-  //   gl.drawArrays(primitiveType, offset, count);
+  // var colorUniformLocation = gl.getUniformLocation(program, "u_color");
+  gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
 
   var resolutionUniformLocation = gl.getUniformLocation(
     program,
     "u_resolution",
   );
 
-  //   var positions = [10, 20, 80, 20, 10, 30, 10, 30, 80, 20, 80, 30];
-  //   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+  // var positions = [10, 20, 80, 20, 10, 30, 10, 30, 80, 20, 80, 30];
+  // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
-    gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
+  gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
 
   //   // draw
-  //   var primitiveType = gl.TRIANGLES;
-  //   var offset = 0;
-  //   var count = 6;
-  //   gl.drawArrays(primitiveType, offset, count);
+  var primitiveType = gl.TRIANGLES;
+  var offset = 0;
+  var count = 6;
+  //gl.uniform4f(colorUniformLocation, 1, 0, 0, 1);
+  gl.drawArrays(primitiveType, offset, count);
 
-  var colorUniformLocation = gl.getUniformLocation(program, "u_color");
+  //draw 50 random rectangles in random colors
+  // for (var ii = 0; ii < 50; ++ii) {
+  //   setRectangle(
+  //     gl,
+  //     randomInt(300),
+  //     randomInt(300),
+  //     randomInt(300),
+  //     randomInt(300),
+  //   );
 
-  // draw 50 random rectangles in random colors
-  for (var ii = 0; ii < 50; ++ii) {
-    setRectangle(
-      gl,
-      randomInt(300),
-      randomInt(300),
-      randomInt(300),
-      randomInt(300),
-    );
+  //   // Set a random color.
+  //   gl.uniform4f(
+  //     colorUniformLocation,
+  //     Math.random(),
+  //     Math.random(),
+  //     Math.random(),
+  //     1,
+  //   );
 
-    // Set a random color.
-    gl.uniform4f(
-      colorUniformLocation,
-      Math.random(),
-      Math.random(),
-      Math.random(),
-      1,
-    );
+  //   // Draw the rectangle.
+  //   gl.drawArrays(gl.TRIANGLES, 0, 6);
+  // }
+  // function randomInt(range) {
+  //   return Math.floor(Math.random() * range);
+  // }
 
-    // Draw the rectangle.
-    gl.drawArrays(gl.TRIANGLES, 0, 6);
-  }
-  function randomInt(range) {
-    return Math.floor(Math.random() * range);
-  }
+  // function setRectangle(gl, x, y, width, height) {
+  //   var x1 = x;
+  //   var x2 = x + width;
+  //   var y1 = y;
+  //   var y2 = y + height;
 
-  function setRectangle(gl, x, y, width, height) {
-    var x1 = x;
-    var x2 = x + width;
-    var y1 = y;
-    var y2 = y + height;
+  //   gl.bufferData(
+  //     gl.ARRAY_BUFFER,
+  //     new Float32Array([x1, y1, x2, y1, x1, y2, x1, y2, x2, y1, x2, y2]),
+  //     gl.STATIC_DRAW,
+  //   );
+  // }
 
-    gl.bufferData(
-      gl.ARRAY_BUFFER,
-      new Float32Array([x1, y1, x2, y1, x1, y2, x1, y2, x2, y1, x2, y2]),
-      gl.STATIC_DRAW,
-    );
-  }
+  // gl.bufferData(
+  //   gl.ARRAY_BUFFER,
+  //   new Float32Array([100, 100, 300, 100, 200, 300]),
+  //   gl.STATIC_DRAW,
+  // );
+  // gl.uniform4f(colorUniformLocation, 0, 1, 0, 1);
+  // gl.drawArrays(gl.LINE_LOOP, 0, 3);
 }
 
 main();

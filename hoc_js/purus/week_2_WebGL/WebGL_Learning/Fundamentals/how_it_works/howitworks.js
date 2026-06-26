@@ -106,21 +106,13 @@ function main() {
     };
   }
 
-  // Draw the scene.
   function drawScene() {
-    // Tell WebGL how to convert from clip space to pixels
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
-    // Clear the canvas.
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    // Tell it to use our program (pair of shaders)
     gl.useProgram(program);
-
-    // Turn on the attribute
     gl.enableVertexAttribArray(positionAttributeLocation);
-
-    // Bind the position buffer.
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
     // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
