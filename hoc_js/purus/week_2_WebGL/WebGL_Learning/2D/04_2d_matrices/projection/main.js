@@ -13,8 +13,6 @@ const fragmentShader = createShader(
 const program = createProgram(gl, vertexShader, fragmentShader);
 
 const positionLocation = gl.getAttribLocation(program, "a_position");
-
-const resolutionLocation = gl.getUniformLocation(program, "u_resolution");
 const colorLocation = gl.getUniformLocation(program, "u_color");
 const matrixLocation = gl.getUniformLocation(program, "u_matrix");
 
@@ -47,8 +45,8 @@ gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
 gl.uniform4fv(colorLocation, [Math.random(), Math.random(), Math.random(), 1]);
 
-// sau: rút gọn 
-var matrix = projection(gl.canvas.clientWidth, gl.canvas.clientHeight);
+// sau: rút gọn
+let matrix = projection(gl.canvas.clientWidth, gl.canvas.clientHeight);
 matrix = translate(matrix, 50, 200);
 matrix = rotate(matrix, Math.PI * 0);
 matrix = scale(matrix, 0.5, 0.5);
