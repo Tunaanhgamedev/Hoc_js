@@ -1,9 +1,11 @@
 "use strict";
 
 async function main() {
-  const canvas = document.querySelector("#canvas");
-  const gl = canvas.getContext("webgl");
-  if (!gl) return;
+  var canvas = document.querySelector("#canvas");
+  var gl = canvas.getContext("webgl");
+  if (!gl) {
+    return;
+  }
 
   const program = await createProgramFromFiles(
     gl,
@@ -11,17 +13,16 @@ async function main() {
     "shaders/fragment.glsl",
   );
 
-  const positionLocation = gl.getAttribLocation(program, "a_position");
-  const colorLocation = gl.getAttribLocation(program, "a_color");
-  const matrixLocation = gl.getUniformLocation(program, "u_matrix");
+  var positionLocation = gl.getAttribLocation(program, "a_position");
+  var colorLocation = gl.getAttribLocation(program, "a_color");
 
-  // Create a buffer to put positions in
-  const positionBuffer = gl.createBuffer();
+  var matrixLocation = gl.getUniformLocation(program, "u_matrix");
+
+  var positionBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
   setGeometry(gl);
 
-  // Create a buffer to put colors in
-  const colorBuffer = gl.createBuffer();
+  var colorBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
   setColors(gl);
 
@@ -33,9 +34,9 @@ async function main() {
     return (d * Math.PI) / 180;
   }
 
-  const translation = [45, 150, 0];
-  const rotation = [degToRad(40), degToRad(25), degToRad(325)];
-  const scale = [1, 1, 1];
+  var translation = [45, 150, 0];
+  var rotation = [degToRad(40), degToRad(25), degToRad(325)];
+  var scale = [1, 1, 1];
 
   drawScene();
 
@@ -104,8 +105,8 @@ async function main() {
 
   function updateRotation(index) {
     return function (event, ui) {
-      const angleInDegrees = ui.value;
-      const angleInRadians = (angleInDegrees * Math.PI) / 180;
+      var angleInDegrees = ui.value;
+      var angleInRadians = (angleInDegrees * Math.PI) / 180;
       rotation[index] = angleInRadians;
       drawScene();
     };
@@ -122,17 +123,25 @@ async function main() {
   function drawScene() {
     webglUtils.resizeCanvasToDisplaySize(gl.canvas);
 
+    // Tell WebGL how to convert from clip space to pixels
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
     // Clear the canvas.
-    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+    // Turn on culling. By default backfacing triangles
+    // will be culled.
     gl.enable(gl.CULL_FACE);
 
+    // Enable the depth buffer
+    gl.enable(gl.DEPTH_TEST);
+
     gl.useProgram(program);
+
     gl.enableVertexAttribArray(positionLocation);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
     gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
 
     // Turn on the color attribute
@@ -140,9 +149,11 @@ async function main() {
 
     // Bind the color buffer.
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+
     gl.vertexAttribPointer(colorLocation, 3, gl.UNSIGNED_BYTE, true, 0, 0);
 
-    let matrix = m4.projection(
+    // Compute the matrices
+    var matrix = m4.projection(
       gl.canvas.clientWidth,
       gl.canvas.clientHeight,
       400,
@@ -158,11 +169,13 @@ async function main() {
     matrix = m4.zRotate(matrix, rotation[2]);
     matrix = m4.scale(matrix, scale[0], scale[1], scale[2]);
 
+    // Set the matrix.
     gl.uniformMatrix4fv(matrixLocation, false, matrix);
 
-    let primitiveType = gl.TRIANGLES;
-    let offset = 0;
-    let count = 16 * 6;
+    // Draw the geometry.
+    var primitiveType = gl.TRIANGLES;
+    var offset = 0;
+    var count = 16 * 6;
     gl.drawArrays(primitiveType, offset, count);
   }
 }
@@ -173,13 +186,13 @@ function setGeometry(gl) {
     gl.ARRAY_BUFFER,
     new Float32Array([
       // left column front
-      0, 0, 0, 30, 0, 0, 0, 150, 0, 0, 150, 0, 30, 0, 0, 30, 150, 0,
+      0, 0, 0, 0, 150, 0, 30, 0, 0, 0, 150, 0, 30, 150, 0, 30, 0, 0,
 
       // top rung front
-      30, 0, 0, 100, 0, 0, 30, 30, 0, 30, 30, 0, 100, 0, 0, 100, 30, 0,
+      30, 0, 0, 30, 30, 0, 100, 0, 0, 30, 30, 0, 100, 30, 0, 100, 0, 0,
 
       // middle rung front
-      30, 60, 0, 67, 60, 0, 30, 90, 0, 30, 90, 0, 67, 60, 0, 67, 90, 0,
+      30, 60, 0, 30, 90, 0, 67, 60, 0, 30, 90, 0, 67, 90, 0, 67, 60, 0,
 
       // left column back
       0, 0, 30, 30, 0, 30, 0, 150, 30, 0, 150, 30, 30, 0, 30, 30, 150, 30,
@@ -200,19 +213,19 @@ function setGeometry(gl) {
       30, 30, 0, 30, 30, 30, 100, 30, 30, 30, 30, 0, 100, 30, 30, 100, 30, 0,
 
       // between top rung and middle
-      30, 30, 0, 30, 30, 30, 30, 60, 30, 30, 30, 0, 30, 60, 30, 30, 60, 0,
+      30, 30, 0, 30, 60, 30, 30, 30, 30, 30, 30, 0, 30, 60, 0, 30, 60, 30,
 
       // top of middle rung
-      30, 60, 0, 30, 60, 30, 67, 60, 30, 30, 60, 0, 67, 60, 30, 67, 60, 0,
+      30, 60, 0, 67, 60, 30, 30, 60, 30, 30, 60, 0, 67, 60, 0, 67, 60, 30,
 
       // right of middle rung
-      67, 60, 0, 67, 60, 30, 67, 90, 30, 67, 60, 0, 67, 90, 30, 67, 90, 0,
+      67, 60, 0, 67, 90, 30, 67, 60, 30, 67, 60, 0, 67, 90, 0, 67, 90, 30,
 
       // bottom of middle rung.
       30, 90, 0, 30, 90, 30, 67, 90, 30, 30, 90, 0, 67, 90, 30, 67, 90, 0,
 
       // right of bottom
-      30, 90, 0, 30, 90, 30, 30, 150, 30, 30, 90, 0, 30, 150, 30, 30, 150, 0,
+      30, 90, 0, 30, 150, 30, 30, 90, 30, 30, 90, 0, 30, 150, 0, 30, 150, 30,
 
       // bottom
       0, 150, 0, 0, 150, 30, 30, 150, 30, 0, 150, 0, 30, 150, 30, 30, 150, 0,
@@ -223,7 +236,6 @@ function setGeometry(gl) {
     gl.STATIC_DRAW,
   );
 }
-
 // Fill the buffer with colors for the 'F'.
 function setColors(gl) {
   gl.bufferData(
