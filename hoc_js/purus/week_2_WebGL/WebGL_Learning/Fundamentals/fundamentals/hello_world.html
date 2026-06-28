@@ -2,35 +2,35 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebGL Hello World</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebGL Hello World</title>
 </head>
 
 <body>
-    <canvas id="canvas" width="700" height="500" style="border:1px solid lightgrey;"> </canvas>
+  <canvas id="canvas" width="700" height="500" style="border:1px solid lightgrey;"> </canvas>
 </body>
 <script id="vertex-shader-2d" type="notjs">
 
-  attribute vec4 a_position;
-  // attribute vec2 a_position;
+  // attribute vec4 a_position;
+  attribute vec2 a_position;
 
   uniform vec2 u_resolution;
  
   void main() {
  
     // Chuyển đổi vị trí từ pixel sang 0.0 đến 1.0
-   //vec2 zeroToOne = a_position / u_resolution;
+   vec2 zeroToOne = a_position / u_resolution;
 
    // Chuyển đổi từ 0->1 sang 0->2
-   //vec2 zeroToTwo = zeroToOne * 2.0;
+   vec2 zeroToTwo = zeroToOne * 2.0;
 
    // Chuyển đổi từ 0->2 sang -1->+1 (không gian clip)
-   //vec2 clipSpace = zeroToTwo - 1.0;
+   vec2 clipSpace = zeroToTwo - 1.0;
 
    // gl_Position = vec4(clipSpace, 0, 1);
-    gl_Position = a_position;
-       //gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+    // gl_Position = a_position;
+    gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
   }
  
 </script>
@@ -39,18 +39,16 @@
 
   precision mediump float;
 
-  float rand(vec2 co)
-{
-    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
-}
-  // uniform vec4 u_color;
+  // float rand(vec2 co){return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);}
+  uniform vec4 u_color;
  
   void main() {
     // gl_FragColor = vec4(1, 0, 0.5, 1);
-    float r = rand(gl_FragCoord.xy);
-    float g = rand(gl_FragCoord.xy * 2.0);
-    float b = rand(gl_FragCoord.xy * 3.0);
-    gl_FragColor = vec4(r, g, b, 1);
+    // float r = rand(gl_FragCoord.xy);
+    // float g = rand(gl_FragCoord.xy * 2.0);
+    // float b = rand(gl_FragCoord.xy * 3.0);
+    // gl_FragColor = vec4(r, g, b, 1);
+    gl_FragColor = u_color;
   }
  
 </script>
