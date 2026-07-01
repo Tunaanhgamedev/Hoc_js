@@ -25,7 +25,6 @@ gl.clear(gl.COLOR_BUFFER_BIT);
 gl.useProgram(program);
 
 gl.enableVertexAttribArray(positionLocation);
-gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
 gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
