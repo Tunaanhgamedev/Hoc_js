@@ -32,38 +32,19 @@ gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
 
 gl.uniform4f(colorLocation, Math.random(), Math.random(), Math.random(), 1);
 
-const positions1 = [
-  10, 60,
-  200, 60,
-  105, 30,
-];
+const positions1 = [10, 60, 200, 60, 105, 30];
 
-const positions2 = [
-  10, 80,
-  200, 80,
-  105, 50,
-];
+const positions2 = [10, 80, 200, 80, 105, 50];
 
-const positions3 = [
-  10, 100,
-  200, 100,
-  105, 70,
-];
+const positions3 = [10, 100, 200, 100, 105, 70];
 
-const positions4 = [
-  80, 100,
-  130, 100,
-  80, 160,
-  130, 100,
-  130, 160,
-  80, 160,
-];
+const positions4 = [80, 100, 130, 100, 80, 160, 130, 100, 130, 160, 80, 160];
 
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions1), gl.STATIC_DRAW);
-gl.drawArrays(gl.TRIANGLES, 0, positions1.length);
+gl.drawArrays(gl.TRIANGLES, 0, positions1.length / 2);
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions2), gl.STATIC_DRAW);
-gl.drawArrays(gl.TRIANGLES, 0, positions2.length);
+gl.drawArrays(gl.TRIANGLES, 0, positions2.length / 2);
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions3), gl.STATIC_DRAW);
-gl.drawArrays(gl.TRIANGLES, 0, positions3.length);
+gl.drawArrays(gl.TRIANGLES, 0, positions3.length / 2);
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions4), gl.STATIC_DRAW);
-gl.drawArrays(gl.TRIANGLES, 0, positions4.length);
+gl.drawArrays(gl.TRIANGLES, 0, positions4.length / 2);
