@@ -18,3 +18,14 @@ sprite.destroy();
 
 // Giải phóng tài nguyên liên quan đến texture, xóa ở phía texture lẫn trong gpu
 texture.unload();
+
+// Sử dụng pool để quản lý bộ nhớ của các texture, khi texture không còn được sử dụng nữa thì sẽ tự động giải phóng tài nguyên liên quan đến texture, xóa ở phía texture lẫn trong gpu
+const texturePool = new PIXI.utils.TexturePool();
+const texture2 = texturePool.get("/assets/bunny.png"); // get hoặc acquire
+const sprite2 = new Sprite(texture2);
+
+// Xóa hoàn toàn sprite khỏi bộ nhớ và giải phóng tài nguyên liên quan, xóa ở phía texture lẫn trong gpu
+sprite2.destroy();
+
+// Trả object về pool
+texturePool.release(texture2);
