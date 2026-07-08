@@ -19,8 +19,7 @@ import { Application, Assets, Texture, Sprite } from "pixi.js";
   sprite.y = app.screen.height / 2;
 
   // Tải nhiều nội dung cùng một lúc
-  const textures =
-    await Assets.load(["/assets/bunny.png", "/assets/cat.png"]);
+  const textures = await Assets.load(["/assets/bunny.png", "/assets/cat.png"]);
   const bunnySprite = new Sprite(textures["/assets/bunny.png"]);
   const catSprite = new Sprite(textures["/assets/cat.png"]);
 
@@ -45,15 +44,30 @@ import { Application, Assets, Texture, Sprite } from "pixi.js";
   //   await Assets.unload("/assets/bunny.png");
 
   // Nên sử dụng cách truy xuất ảnh này
-  //   Assets.addBundle("fruits", {
-  //     apple: "assets/apple.png",
-  //     banana: "assets/banana.png",
-  //     orange: "assets/orange.png",
-  //   });
+  Assets.addBundle("fruits", {
+    apple: "assets/apple.png",
+    banana: "assets/banana.png",
+    orange: "assets/orange.png",
+  });
 
-  //   // load
-  //   const textures = await Assets.loadBundle("fruits");
-  //   // Lấy
-  //   textures.apple; // trả về texture của apple
-  //   textures.banana; // trả về texture của banana
+  // load
+  const texturefruits = await Assets.loadBundle("fruits");
+  // Lấy
+  texturefruits.apple; // trả về texture của apple
+  texturefruits.banana; // trả về texture của banana
+  texturefruits.orange; // trả về texture của orange
+
+  const apple = new Sprite(texturefruits.apple);
+  apple.scale.set(0.1);
+  apple.position.set(100, 100);
+
+  const banana = new Sprite(texturefruits.banana);
+  banana.scale.set(0.05);
+  banana.position.set(300, 100);
+
+  const orange = new Sprite(texturefruits.orange);
+  orange.scale.set(0.1);
+  orange.position.set(500, 100);
+
+  app.stage.addChild(apple, banana, orange);
 })();
