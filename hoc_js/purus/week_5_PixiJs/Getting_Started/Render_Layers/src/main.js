@@ -121,6 +121,9 @@ import { Fish } from "./Fish";
   circle.stroke({ color: "white", width: 5 });
 
   app.stage.addChild(layer);
+  app.stage.addChild(circle);
+  app.stage.addChild(rect);
+
   //layer.attach(rect);
   layer.attach(circle);
   layer.attach(rect);
