@@ -1,3 +1,3 @@
 # Hoc_js
 hết cứu
-intern purus
+**intern purus
